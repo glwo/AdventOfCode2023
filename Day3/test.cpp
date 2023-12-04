@@ -5,11 +5,15 @@
 #include <unordered_set>
 #include <algorithm>
 
+bool isNumber(char x) {
+    return (x >= '0' && x <= '9');
+}
+
 bool hasAdjacentCharacter(const std::vector<std::string> &grid, int row, int col)
 {
     const int dr[] = {-1, -1, -1, 0, 0, 1, 1, 1}; // Check all eight directions (up, down, left, right, and diagonals)
     const int dc[] = {-1, 0, 1, -1, 1, -1, 0, 1};
-    const std::unordered_set<char> symbols = {'/', '*', '$', '#', '+', '/', '@', '=', '-', '&'};
+
 
     // Check all eight neighboring cells
     for (int i = 0; i < 8; ++i)
@@ -22,7 +26,7 @@ bool hasAdjacentCharacter(const std::vector<std::string> &grid, int row, int col
         {
             char neighbor = grid[newRow][newCol];
 
-            if (symbols.count(neighbor) > 0)
+            if (neighbor != '.' && !isNumber(neighbor))
             {
                 return true;
             }
@@ -32,7 +36,7 @@ bool hasAdjacentCharacter(const std::vector<std::string> &grid, int row, int col
     return false; // Return false if none of the neighboring cells has a valid character
 }
 
-std::string findValidNumber(const std::vector<std::string> &grid, int row, int col)
+std::string findValidNumber(std::vector<std::string> &grid, int row, int col)
 {
     std::string validNumber;
 
@@ -40,12 +44,14 @@ std::string findValidNumber(const std::vector<std::string> &grid, int row, int c
     for (int c = col; c >= 0 && std::isdigit(grid[row][c]); --c)
     {
         validNumber.insert(validNumber.begin(), grid[row][c]);
+        grid[row][c] = '.'; // Replace the digit with '.'
     }
 
     // Check right
     for (int c = col + 1; c < grid[row].size() && std::isdigit(grid[row][c]); ++c)
     {
         validNumber.push_back(grid[row][c]);
+        grid[row][c] = '.'; // Replace the digit with '.'
     }
 
     return validNumber;
@@ -53,7 +59,7 @@ std::string findValidNumber(const std::vector<std::string> &grid, int row, int c
 
 int main()
 {
-    std::ifstream inputFile("test.txt"); // Adjust the file name as needed
+    std::ifstream inputFile("input.txt"); // Adjust the file name as needed
     if (!inputFile.is_open())
     {
         std::cerr << "Error opening the input file." << std::endl;
@@ -86,30 +92,9 @@ int main()
         }
     }
 
-    // Sort lexicographically
-    std::sort(validNumbers.begin(), validNumbers.end());
-
-    std::vector<std::string> uniqueValidNumbers;
-
-    // Use empty string to compare
-    std::string previous = "";
-
     for (std::string number : validNumbers)
     {
-
-        // Compare strings
-        if (number != previous)
-        {
-
-            uniqueValidNumbers.push_back(number);
-
-            previous = number;
-        }
-    }
-
-    // Print unique strings
-    for (std::string number : uniqueValidNumbers)
-    {
+        // std::cout << number << std::endl;
         sum += std::stoi(number);
     }
 
