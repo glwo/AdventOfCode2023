@@ -30,7 +30,6 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <unordered_set>
 #include <algorithm>
 
 bool isNumber(char x) {
@@ -39,17 +38,14 @@ bool isNumber(char x) {
 
 bool hasAdjacentCharacter(const std::vector<std::string> &grid, int row, int col)
 {
-    const int dr[] = {-1, -1, -1, 0, 0, 1, 1, 1}; // Check all eight directions (up, down, left, right, and diagonals)
+    const int dr[] = {-1, -1, -1, 0, 0, 1, 1, 1};
     const int dc[] = {-1, 0, 1, -1, 1, -1, 0, 1};
 
-
-    // Check all eight neighboring cells
     for (int i = 0; i < 8; ++i)
     {
         int newRow = row + dr[i];
         int newCol = col + dc[i];
 
-        // Check if the new position is within the grid boundaries
         if (newRow >= 0 && newRow < grid.size() && newCol >= 0 && newCol < grid[0].size())
         {
             char neighbor = grid[newRow][newCol];
@@ -61,7 +57,7 @@ bool hasAdjacentCharacter(const std::vector<std::string> &grid, int row, int col
         }
     }
 
-    return false; // Return false if none of the neighboring cells has a valid character
+    return false;
 }
 
 std::string findValidNumber(std::vector<std::string> &grid, int row, int col)
@@ -87,7 +83,7 @@ std::string findValidNumber(std::vector<std::string> &grid, int row, int col)
 
 int main()
 {
-    std::ifstream inputFile("input.txt"); // Adjust the file name as needed
+    std::ifstream inputFile("test.txt");
     if (!inputFile.is_open())
     {
         std::cerr << "Error opening the input file." << std::endl;
@@ -96,39 +92,57 @@ int main()
 
     std::vector<std::string> grid;
     std::string line;
-    std::vector<std::string> validNumbers;
+    std::vector<int> adjacentNumbers;
     int sum = 0;
 
-    // Read each line from the file and store it in the grid vector
     while (std::getline(inputFile, line))
     {
         grid.push_back(line);
     }
 
-    // Process each cell in the grid
     for (int row = 0; row < grid.size(); ++row)
     {
         for (int col = 0; col < grid[row].size(); ++col)
         {
-            // Your logic for processing each cell goes here
-            // Example: call findValidNumber for each cell
-            if (std::isdigit(grid[row][col]) && hasAdjacentCharacter(grid, row, col) == true)
+            if (std::isdigit(grid[row][col]) && hasAdjacentCharacter(grid, row, col))
             {
                 std::string result = findValidNumber(grid, row, col);
-                validNumbers.push_back(result);
+                int number = std::stoi(result);
+                adjacentNumbers.push_back(number);
+            }
+            else if (grid[row][col] == '*' && adjacentNumbers.size() >= 2)
+            {
+                // If the current character is '*', sum the product of all adjacent numbers
+                int product = 1;
+                for (int num : adjacentNumbers)
+                {
+                    std::cout << num << std::endl;
+                    product *= num;
+                }
+                sum += product;
+
+                // Clear the vector for the next set of adjacent numbers
+                adjacentNumbers.clear();
             }
         }
     }
 
-    for (std::string number : validNumbers)
+    // Process any remaining adjacent numbers after the loop
+    int product = 1;
+    for (int num : adjacentNumbers)
     {
-        // std::cout << number << std::endl;
-        sum += std::stoi(number);
+        product *= num;
+    }
+    sum += product;
+
+    for (int number : adjacentNumbers)
+    {
+        std::cout << number << std::endl;
     }
 
     std::cout << "Sum: " << sum << std::endl;
 
-    inputFile.close(); // Close the file
+    inputFile.close();
 
     return 0;
 }

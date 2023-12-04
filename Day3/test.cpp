@@ -59,7 +59,7 @@ std::string findValidNumber(std::vector<std::string> &grid, int row, int col)
 
 int main()
 {
-    std::ifstream inputFile("input.txt"); // Adjust the file name as needed
+    std::ifstream inputFile("test.txt"); // Adjust the file name as needed
     if (!inputFile.is_open())
     {
         std::cerr << "Error opening the input file." << std::endl;
