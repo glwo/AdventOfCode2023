@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "fstream": "cpp",
-        "concepts": "cpp",
-        "string_view": "cpp",
-        "ranges": "cpp"
-    }
-}
